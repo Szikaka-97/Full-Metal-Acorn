@@ -31,16 +31,11 @@ namespace FullMetalAcorn {
 
 				this.Tile = closestTile;
 			}
-
 		}
 
-		public virtual void OnEnterHover() {
-			Debug.Log("Enter Hover");
-		}
+		public virtual void OnEnterHover() { }
 
-		public virtual void OnExitHover() {
-			Debug.Log("Exit Hover");
-		}
+		public virtual void OnExitHover() { }
 
 		public virtual void OnClick() { }
 	}

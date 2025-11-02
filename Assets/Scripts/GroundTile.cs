@@ -3,7 +3,7 @@ using UnityEngine;
 namespace FullMetalAcorn {
 	public class GroundTile {
 		public Vector2 position;
-		public Vector2 gridPosition;
+		public Vector2Int gridPosition;
 		public bool walkable;
 		public int layer;
 		public Griddable occupant;

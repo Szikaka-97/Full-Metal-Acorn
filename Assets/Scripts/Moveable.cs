@@ -5,6 +5,13 @@ namespace FullMetalAcorn {
 		[SerializeField]
 		private int movementRange;
 
+		[SerializeField]
+		private float movementSpeed;
+
+		public float MovementSpeed {
+			get => movementSpeed;
+		}
+
 		void Start() {
 			SnapToGrid();
 		}
