@@ -43,8 +43,6 @@ namespace FullMetalAcorn {
 		}
 
 		public GroundTile GetTileAt(int x, int y) {
-			Debug.Log("x: " + x + " y: " + y);
-
 			int baseX = -y / 2;
 
 			if (x < baseX || x >= baseX + this.groundSize.x + (y % 2)) {
