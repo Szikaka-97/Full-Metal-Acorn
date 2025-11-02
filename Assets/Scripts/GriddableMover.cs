@@ -4,6 +4,11 @@ using UnityEngine.InputSystem;
 
 namespace FullMetalAcorn {
 	public class GriddableMover : MonoBehaviour {
+		[SerializeField]
+		private Mesh helperMesh;
+		[SerializeField]
+		private Material helperMaterial;
+
 		private Moveable current;
 
 		private LinkedList<GridPath> activePaths = new LinkedList<GridPath>();
@@ -98,6 +103,24 @@ namespace FullMetalAcorn {
 					activePath.tiles[endPoint].position,
 					Mathf.SmoothStep(0.0f, 1.0f, frac)
 				);
+
+				for (int i = 0; i < activePath.tiles.Length - 1; i++) {
+					GroundTile a = activePath.tiles[i];
+					GroundTile b = activePath.tiles[i + 1];
+
+					MaterialPropertyBlock props = new MaterialPropertyBlock();
+
+					float rotation = 0;
+					if ((b.position.x - a.position.x) * (b.position.y - a.position.y) > 0) {
+						rotation = 1;
+					}
+					props.SetFloat("_Rotation", rotation);
+
+					RenderParams rp = new RenderParams(this.helperMaterial);
+					rp.matProps = props;
+
+					Graphics.RenderMesh(rp, this.helperMesh, 0, Matrix4x4.Translate((a.position + b.position) * 0.5f));
+				}
 			}
 
 			foreach (GridPath removed in pathsToRemove) {

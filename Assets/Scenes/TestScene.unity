@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.Moveable
   movementRange: 0
-  movementSpeed: 2
+  movementSpeed: 0
 --- !u!4 &470251411
 Transform:
   m_ObjectHideFlags: 0
@@ -498,6 +498,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f73b5c7ae702b5fe9bf4563360adebab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.GriddableMover
+  helperMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  helperMaterial: {fileID: 2100000, guid: c64e59ff27f29d956a6f5307eff27af0, type: 2}
 --- !u!1 &1356537645
 GameObject:
   m_ObjectHideFlags: 0
@@ -619,7 +621,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FullMetalAcorn.GroundController
   groundTileSpritePrefab: {fileID: 1708057191}
   groundPosition: {x: 0, y: 0}
-  groundSize: {x: 9, y: 5}
+  groundSize: {x: 5, y: 5}
   tileStep: 0.25
   tileTopCenter: 0.75
   highlight: {fileID: 1051046005}
