@@ -10,10 +10,12 @@ namespace FullMetalAcorn {
 		private class PathfindNode {
 			public GroundTile tile;
 			public PathfindNode previousNode;
+			public int distance;
 
-			public PathfindNode(GroundTile tile, PathfindNode previous) {
+			public PathfindNode(GroundTile tile, PathfindNode previous, int distance) {
 				this.tile = tile;
 				this.previousNode = previous;
+				this.distance = distance;
 			}
 		}
 
@@ -114,19 +116,19 @@ namespace FullMetalAcorn {
 			this.mousePosAction = InputSystem.actions.FindAction("Point");
 		}
 
-		public GroundTile[] FindPath(Vector2Int start, Vector2Int end) {
+		public GroundTile[] FindPath(Vector2Int start, Vector2Int end, int maxSteps = int.MaxValue) {
 			return FindPath(GetTileAt(start.x, start.y), GetTileAt(end.x, end.y));
 		}
 
-		public GroundTile[] FindPath(GroundTile start, Vector2Int end) {
+		public GroundTile[] FindPath(GroundTile start, Vector2Int end, int maxSteps = int.MaxValue) {
 			return FindPath(start, GetTileAt(end.x, end.y));
 		}
 
-		public GroundTile[] FindPath(Vector2Int start, GroundTile end) {
+		public GroundTile[] FindPath(Vector2Int start, GroundTile end, int maxSteps = int.MaxValue) {
 			return FindPath(GetTileAt(start.x, start.y), end);
 		}
 
-		public GroundTile[] FindPath(GroundTile start, GroundTile end) {
+		public GroundTile[] FindPath(GroundTile start, GroundTile end, int maxSteps = int.MaxValue) {
 			int GetTileIndex(GroundTile t) {
 				return t.gridPosition.y * (this.groundSize.x + 1) + t.gridPosition.x;
 			}
@@ -145,7 +147,7 @@ namespace FullMetalAcorn {
 
 			visitedStates[GetTileIndex(start)] = true;
 
-			PathfindNode currentNode = new PathfindNode(start, null);
+			PathfindNode currentNode = new PathfindNode(start, null, 0);
 
 			Queue<PathfindNode> movementQueue = new Queue<PathfindNode>();
 			movementQueue.Enqueue(currentNode);
@@ -166,10 +168,10 @@ namespace FullMetalAcorn {
 					if (next && next.IsFree() && !visitedStates[GetTileIndex(next)]) {
 						visitedStates[GetTileIndex(next)] = true;
 
-						movementQueue.Enqueue(new PathfindNode(next, currentNode));
+						movementQueue.Enqueue(new PathfindNode(next, currentNode, currentNode.distance + 1));
 					}
 				}
-			} while (currentNode.tile != end && movementQueue.Count > 0);
+			} while (currentNode.tile != end && currentNode.distance <= maxSteps && movementQueue.Count > 0);
 
 			List<PathfindNode> pathNodes = new List<PathfindNode>();
 
@@ -179,15 +181,18 @@ namespace FullMetalAcorn {
 
 					currentNode = currentNode.previousNode;
 				}
+
+				GroundTile[] path = new GroundTile[pathNodes.Count];
+
+				for (int i = 0; i < pathNodes.Count; i++) {
+					path[i] = pathNodes[pathNodes.Count - 1 - i].tile;
+				}
+
+				return path.ToArray();
 			}
-
-			GroundTile[] path = new GroundTile[pathNodes.Count];
-
-			for (int i = 0; i < pathNodes.Count; i++) {
-				path[i] = pathNodes[pathNodes.Count - 1 - i].tile;
+			else {
+				return null;
 			}
-
-			return path.ToArray();
 		}
 
 		public bool TryGetTileOnPosition(Vector2 position, out GroundTile targetTile) {

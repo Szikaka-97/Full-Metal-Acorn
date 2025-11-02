@@ -71,9 +71,9 @@ namespace FullMetalAcorn {
 
 			if (ground.TryGetTileUnderCursor(out var tile)) {
 				if (this.current && tile.IsFree()) {
-					GroundTile[] path = ground.FindPath(this.current.Tile, tile);
+					GroundTile[] path = ground.FindPath(this.current.Tile, tile, this.current.MovementRange);
 
-					if (path.Length <= this.current.MovementRange + 1) {
+					if (path != null) {
 						if (path.Length == this.current.MovementRange + 1) {
 							DrawPath(path, Color.red);
 						}
