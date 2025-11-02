@@ -6,12 +6,6 @@ using UnityEngine.InputSystem;
 
 namespace FullMetalAcorn {
 	public class GroundController : MonoBehaviour {
-		public struct GroundTile {
-			public Vector2 position;
-			public bool walkable;
-			public int layer;
-		}
-
 		[SerializeField]
 		private GameObject groundTileSpritePrefab;
 
@@ -28,8 +22,19 @@ namespace FullMetalAcorn {
 
 		private InputAction mousePosAction;
 
+		private GroundTile currentHoveredTile;
+
 		private List<GroundTile> tiles = new List<GroundTile>();
 		private List<SpriteRenderer> tileRenderers = new List<SpriteRenderer>();
+
+		public GroundTile GetTileAt(int x, int y) {
+			int index = y * groundSize.x + y + x;
+
+			if (index < this.tiles.Count) {
+				return this.tiles[index];
+			}
+			return null;
+		}
 
 		public void RegenerateTerrain() {
 			foreach (SpriteRenderer sprite in this.tileRenderers) {
@@ -59,7 +64,7 @@ namespace FullMetalAcorn {
 
 				this.tileRenderers.Add(rowSprite);
 
-				for (int tileX = 0; tileX < this.groundSize.x; tileX++) {
+				for (int tileX = 0; tileX < this.groundSize.x + (tileY % 2); tileX++) {
 					float xOffset = tileX - (this.groundSize.x - (1 - (tileY % 2))) / 2.0f;
 
 					GroundTile tile = new GroundTile();
@@ -88,7 +93,7 @@ namespace FullMetalAcorn {
 
 		public bool TryGetTileOnPosition(Vector2 position, out GroundTile targetTile) {
 			bool found = false;
-			targetTile = default(GroundTile);
+			targetTile = default;
 
 			foreach (var tile in this.tiles) {
 				float tileTopBorder = tile.position.y - this.tileTopCenter + 1.0f;
@@ -117,19 +122,44 @@ namespace FullMetalAcorn {
 			return found;
 		}
 
-		void Update() {
+		public GroundTile GetClosestTile(Vector2 position) {
+			float minDistance = float.PositiveInfinity;
+			GroundTile targetTile = default;
+
+			foreach (var tile in this.tiles) {
+				float tileDistance = Vector2.Distance(position, targetTile.position);
+
+				if (tileDistance < minDistance) {
+					minDistance = tileDistance;
+					targetTile = tile;
+				}
+			}
+
+			return targetTile;
+		}
+
+		public bool TryGetTileUnderCursor(out GroundTile tile) {
 			Vector3 mousePos = this.mousePosAction.ReadValue<Vector2>();
 
 			Vector2 pointedPosition = Camera.main.ScreenToWorldPoint(mousePos);
 
-			if (TryGetTileOnPosition(pointedPosition, out GroundTile targetTile)) {
-				this.highlight.gameObject.SetActive(true);
-				this.highlight.transform.position = targetTile.position + Vector2.down * tileTopCenter;
-				this.highlight.sortingOrder = targetTile.layer + 1;
-			}
-			else {
+			return TryGetTileOnPosition(pointedPosition, out tile);
+		}
+
+		public void HighlightTile(GroundTile tile) {
+			if (!tile) {
 				this.highlight.gameObject.SetActive(false);
+
+				return;
 			}
+
+			this.highlight.gameObject.SetActive(true);
+			this.highlight.transform.position = tile.position + Vector2.down * tileTopCenter;
+			this.highlight.sortingOrder = tile.layer;
+		}
+
+		void Update() {
+
 		}
 	}
 }
