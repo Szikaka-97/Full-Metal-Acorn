@@ -163,7 +163,7 @@ namespace FullMetalAcorn {
 				for (int i = 0; i < 4; i++) {
 					GroundTile next = GetTileAt(currentNode.tile.gridPosition + neighbours[i]);
 
-					if (next && !visitedStates[GetTileIndex(next)]) {
+					if (next && next.IsFree() && !visitedStates[GetTileIndex(next)]) {
 						visitedStates[GetTileIndex(next)] = true;
 
 						movementQueue.Enqueue(new PathfindNode(next, currentNode));
