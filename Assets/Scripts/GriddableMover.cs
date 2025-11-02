@@ -43,7 +43,7 @@ namespace FullMetalAcorn {
 			mouseClickAction = InputSystem.actions.FindAction("Click");
 		}
 
-		void DrawPath(GroundTile[] path, Color color) {
+		void DrawPath(GroundTile[] path, Color color, float progress = 0) {
 			for (int i = 0; i < path.Length - 1; i++) {
 				GroundTile a = path[i];
 				GroundTile b = path[i + 1];
@@ -55,7 +55,9 @@ namespace FullMetalAcorn {
 					rotation = 1;
 				}
 				props.SetFloat("_Rotation", rotation);
+				props.SetFloat("_Direction", b.position.x > a.position.x ? 0 : 1);
 				props.SetColor("_BaseColor", color);
+				props.SetFloat("_Progress", progress - i);
 
 				RenderParams rp = new RenderParams(this.helperMaterial);
 				rp.matProps = props;
@@ -138,10 +140,10 @@ namespace FullMetalAcorn {
 				);
 
 				if (activePath.tiles.Length == activePath.mover.MovementRange + 1) {
-					DrawPath(activePath.tiles, Color.red);
+					DrawPath(activePath.tiles, Color.red, startPoint + Mathf.SmoothStep(0.0f, 1.0f, frac));
 				}
 				else {
-					DrawPath(activePath.tiles, Color.green);
+					DrawPath(activePath.tiles, Color.green, startPoint + Mathf.SmoothStep(0.0f, 1.0f, frac));
 				}
 			}
 
