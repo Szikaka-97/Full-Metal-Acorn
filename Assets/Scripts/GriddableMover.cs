@@ -102,11 +102,16 @@ namespace FullMetalAcorn {
 						ground.HighlightTile(null);
 					}
 				}
-				else if (!this.current && tile.occupant && tile.occupant is Moveable) {
+				else if (tile.occupant && tile.occupant is Moveable) {
 					ground.HighlightTile(tile);
 
 					if (this.mouseClickAction.WasPressedThisFrame()) {
-						this.current = tile.occupant as Moveable;
+						if (this.current == tile.occupant) {
+							this.current = null;
+						}
+						else {
+							this.current = tile.occupant as Moveable;
+						}
 					}
 				}
 				else {
