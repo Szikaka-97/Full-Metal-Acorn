@@ -12,6 +12,10 @@ namespace FullMetalAcorn {
 			get => movementSpeed;
 		}
 
+		public int MovementRange {
+			get => movementRange;
+		}
+
 		void Start() {
 			SnapToGrid();
 		}

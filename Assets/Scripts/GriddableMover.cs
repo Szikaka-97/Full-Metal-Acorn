@@ -43,28 +43,61 @@ namespace FullMetalAcorn {
 			mouseClickAction = InputSystem.actions.FindAction("Click");
 		}
 
+		void DrawPath(GroundTile[] path, Color color) {
+			for (int i = 0; i < path.Length - 1; i++) {
+				GroundTile a = path[i];
+				GroundTile b = path[i + 1];
+
+				MaterialPropertyBlock props = new MaterialPropertyBlock();
+
+				float rotation = 0;
+				if ((b.position.x - a.position.x) * (b.position.y - a.position.y) > 0) {
+					rotation = 1;
+				}
+				props.SetFloat("_Rotation", rotation);
+				props.SetColor("_BaseColor", color);
+
+				RenderParams rp = new RenderParams(this.helperMaterial);
+				rp.matProps = props;
+
+				Graphics.RenderMesh(rp, this.helperMesh, 0, Matrix4x4.Translate((a.position + b.position) * 0.5f));
+			}
+		}
+
 		void Update() {
 			GroundController ground = Level.Instance.Ground;
 
 			if (ground.TryGetTileUnderCursor(out var tile)) {
 				if (this.current && tile.IsFree()) {
-					ground.HighlightTile(tile);
+					GroundTile[] path = ground.FindPath(this.current.Tile, tile);
 
-					if (this.mouseClickAction.WasPressedThisFrame()) {
-						GroundTile[] path = ground.FindPath(this.current.Tile, tile);
-
-						if (path != null) {
-							this.activePaths.AddLast(new GridPath(
-								path,
-								this.current
-							));
-
-							path[path.Length - 1].walkable = false;
-
-							this.current.Tile = null;
-
-							this.current = null;
+					if (path.Length <= this.current.MovementRange + 1) {
+						if (path.Length == this.current.MovementRange + 1) {
+							DrawPath(path, Color.red);
 						}
+						else {
+							DrawPath(path, Color.green);
+						}
+
+						ground.HighlightTile(tile);
+
+						if (this.mouseClickAction.WasPressedThisFrame()) {
+							if (path != null) {
+								this.activePaths.AddLast(new GridPath(
+									path,
+									this.current
+								));
+
+								path[path.Length - 1].walkable = false;
+
+								this.current.Tile = null;
+
+								this.current = null;
+							}
+						}
+					}
+					else {
+						ground.HighlightTile(null);
 					}
 				}
 				else if (!this.current && tile.occupant && tile.occupant is Moveable) {
@@ -104,22 +137,11 @@ namespace FullMetalAcorn {
 					Mathf.SmoothStep(0.0f, 1.0f, frac)
 				);
 
-				for (int i = 0; i < activePath.tiles.Length - 1; i++) {
-					GroundTile a = activePath.tiles[i];
-					GroundTile b = activePath.tiles[i + 1];
-
-					MaterialPropertyBlock props = new MaterialPropertyBlock();
-
-					float rotation = 0;
-					if ((b.position.x - a.position.x) * (b.position.y - a.position.y) > 0) {
-						rotation = 1;
-					}
-					props.SetFloat("_Rotation", rotation);
-
-					RenderParams rp = new RenderParams(this.helperMaterial);
-					rp.matProps = props;
-
-					Graphics.RenderMesh(rp, this.helperMesh, 0, Matrix4x4.Translate((a.position + b.position) * 0.5f));
+				if (activePath.tiles.Length == activePath.mover.MovementRange + 1) {
+					DrawPath(activePath.tiles, Color.red);
+				}
+				else {
+					DrawPath(activePath.tiles, Color.green);
 				}
 			}
 

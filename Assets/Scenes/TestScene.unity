@@ -211,7 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0b1e340b16fdf8a6bf2dea8cf10cfea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.Moveable
-  movementRange: 0
+  movementRange: 4
   movementSpeed: 2
 --- !u!1 &881978025
 GameObject:
