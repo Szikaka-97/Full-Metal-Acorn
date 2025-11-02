@@ -43,11 +43,20 @@ namespace FullMetalAcorn {
 		}
 
 		public GroundTile GetTileAt(int x, int y) {
+			Debug.Log("x: " + x + " y: " + y);
+
+			int baseX = -y / 2;
+
+			if (x < baseX || x >= baseX + this.groundSize.x + (y % 2)) {
+				return null;
+			}
+
 			int index = y * (this.groundSize.x + 1) + x;
 
 			if (index >= 0 && index < this.tiles.Count) {
 				return this.tiles[index];
 			}
+
 			return null;
 		}
 
@@ -155,6 +164,7 @@ namespace FullMetalAcorn {
 				
 				for (int i = 0; i < 4; i++) {
 					GroundTile next = GetTileAt(currentNode.tile.gridPosition + neighbours[i]);
+
 					if (next && !visitedStates[GetTileIndex(next)]) {
 						visitedStates[GetTileIndex(next)] = true;
 
