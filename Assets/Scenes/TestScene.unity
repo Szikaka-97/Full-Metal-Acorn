@@ -451,6 +451,7 @@ GameObject:
   - component: {fileID: 1137187449}
   - component: {fileID: 1137187448}
   - component: {fileID: 1137187450}
+  - component: {fileID: 1137187451}
   m_Layer: 0
   m_Name: LevelObject
   m_TagString: Untagged
@@ -500,6 +501,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.GriddableMover
   helperMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   helperMaterial: {fileID: 2100000, guid: c64e59ff27f29d956a6f5307eff27af0, type: 2}
+--- !u!114 &1137187451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137187447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 650fc3655edd936309cd171e0c84f81d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.CameraController
+  gameCamera: {fileID: 881978028}
+  cameraMoveBounds:
+    serializedVersion: 2
+    x: -8
+    y: -4.5
+    width: 16
+    height: 9
+  cameraScrollBoundary: 100
+  cameraScrollSpeed: 2
 --- !u!1 &1356537645
 GameObject:
   m_ObjectHideFlags: 0
