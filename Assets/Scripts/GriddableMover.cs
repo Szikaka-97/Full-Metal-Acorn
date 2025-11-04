@@ -144,6 +144,8 @@ namespace FullMetalAcorn {
 					Mathf.SmoothStep(0.0f, 1.0f, frac)
 				);
 
+				nextPos += Vector3.up * (Mathf.Sin(frac * Mathf.PI) * 0.1f);
+
 				activePath.mover.LastMovement = nextPos - activePath.mover.transform.position;
 				activePath.mover.transform.position = nextPos;
 
