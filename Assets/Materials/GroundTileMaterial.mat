@@ -76,7 +76,7 @@ Material:
     - _ColorRight: {r: 0.30588236, g: 0.52156866, b: 0, a: 1}
     - _ColorTopIdle: {r: 0.54901963, g: 0.76470596, b: 0.29411766, a: 1}
     - _ColorTopSelected: {r: 0.6942917, g: 1, b: 0.333, a: 1}
-    - _GroundSize: {r: 5, g: 21, b: 0, a: 0}
+    - _GroundSize: {r: 10, g: 33, b: 0, a: 0}
     - _MousePos: {r: 0, g: 0, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

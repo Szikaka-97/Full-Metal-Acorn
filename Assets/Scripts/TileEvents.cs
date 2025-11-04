@@ -5,15 +5,15 @@ namespace FullMetalAcorn {
 		delegate void TileHoverEventReceiver(TileHoverEvent e);
 		delegate void TileClickEventReceiver(TileClickEvent e);
 
-		private LinkedList<TileHoverEventReceiver> hoverEventReceivers;
-		private LinkedList<TileClickEventReceiver> clickEventReceivers;
+		private static LinkedList<TileHoverEventReceiver> hoverEventReceivers;
+		private static LinkedList<TileClickEventReceiver> clickEventReceivers;
 
-		void Subscribe(TileHoverEventReceiver r) {
+		static void Subscribe(TileHoverEventReceiver r) {
 			if (r != null) {
 				hoverEventReceivers.AddLast(r);
 			}
 		}
-		void Subscribe(TileClickEventReceiver r) {
+		static void Subscribe(TileClickEventReceiver r) {
 			if (r != null) {
 				clickEventReceivers.AddLast(r);
 			}
