@@ -138,11 +138,14 @@ namespace FullMetalAcorn {
 				int endPoint = Mathf.CeilToInt(activePath.progress);
 				float frac = activePath.progress % 1.0f;
 
-				activePath.mover.transform.position = Vector3.Lerp(
+				Vector3 nextPos = Vector3.Lerp(
 					activePath.tiles[startPoint].position,
 					activePath.tiles[endPoint].position,
 					Mathf.SmoothStep(0.0f, 1.0f, frac)
 				);
+
+				activePath.mover.LastMovement = nextPos - activePath.mover.transform.position;
+				activePath.mover.transform.position = nextPos;
 
 				if (activePath.tiles.Length == activePath.mover.MovementRange + 1) {
 					DrawPath(activePath.tiles, Color.red, startPoint + Mathf.SmoothStep(0.0f, 1.0f, frac));

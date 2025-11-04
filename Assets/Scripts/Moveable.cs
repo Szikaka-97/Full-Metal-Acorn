@@ -16,12 +16,16 @@ namespace FullMetalAcorn {
 			get => movementRange;
 		}
 
+		public Vector2 LastMovement { get; set; }
+
 		void Start() {
 			SnapToGrid();
 		}
 
 		void Update() {
-
+			if (this.TryGetComponent<SpriteRenderer>(out var sprite)) {
+				sprite.flipX = LastMovement.x < 0;
+			}
 		}
 
         public override void OnClick() {
