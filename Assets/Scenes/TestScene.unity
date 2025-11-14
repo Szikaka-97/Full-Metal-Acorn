@@ -211,7 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0b1e340b16fdf8a6bf2dea8cf10cfea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.Moveable
-  movementRange: 4
+  movementRange: 8
   movementSpeed: 2
 --- !u!1 &881978025
 GameObject:
@@ -553,7 +553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FullMetalAcorn.GroundController
   groundPosition: {x: 0, y: 0}
-  groundSize: {x: 5, y: 5}
+  groundSize: {x: 10, y: 8}
   tileStep: 0.25
   tileTopCenter: 0.75
 --- !u!4 &1597205386
