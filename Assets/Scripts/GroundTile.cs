@@ -7,6 +7,7 @@ namespace FullMetalAcorn {
 		public bool walkable;
 		public int layer;
 		public Griddable occupant;
+		public bool highlighted;
 
 		public bool IsFree() {
 			return this.walkable && !this.occupant;

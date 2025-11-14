@@ -6,6 +6,8 @@ using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
 
 namespace FullMetalAcorn {
+	[RequireComponent(typeof(GroundRenderer))]
+	[ExecuteInEditMode]
 	public class GroundController : MonoBehaviour {
 		private class PathfindNode {
 			public GroundTile tile;
@@ -20,25 +22,17 @@ namespace FullMetalAcorn {
 		}
 
 		[SerializeField]
-		private GameObject groundTileSpritePrefab;
-
-		[SerializeField]
 		private Vector2 groundPosition;
 		[SerializeField]
-		private Vector2Int groundSize;
+		private Vector2 groundSize;
 		[SerializeField]
 		private float tileStep = 0.25f;
 		[SerializeField]
 		private float tileTopCenter = 0.75f;
-		[SerializeField]
-		private SpriteRenderer highlight;
-
 		private InputAction mousePosAction;
 
-		private GroundTile currentHighlightedTile;
-
+		private Vector2Int tileCounts;
 		private List<GroundTile> tiles = new List<GroundTile>();
-		private List<SpriteRenderer> tileRenderers = new List<SpriteRenderer>();
 
 		public GroundTile GetTileAt(Vector2Int gridPos) {
 			return GetTileAt(gridPos.x, gridPos.y);
@@ -47,11 +41,11 @@ namespace FullMetalAcorn {
 		public GroundTile GetTileAt(int x, int y) {
 			int baseX = -y / 2;
 
-			if (x < baseX || x >= baseX + this.groundSize.x + (y % 2)) {
+			if (x < baseX || x >= baseX + this.tileCounts.x + (y % 2)) {
 				return null;
 			}
 
-			int index = y * (this.groundSize.x + 1) + x;
+			int index = y * (this.tileCounts.x + 1) + x;
 
 			if (index >= 0 && index < this.tiles.Count) {
 				return this.tiles[index];
@@ -60,60 +54,49 @@ namespace FullMetalAcorn {
 			return null;
 		}
 
+		private Vector2Int GetTileCounts() {
+			return new Vector2Int(Mathf.CeilToInt(this.groundSize.x), Mathf.CeilToInt(this.groundSize.y / this.tileStep) + 1);
+		}
+
 		public void RegenerateTerrain() {
-			foreach (SpriteRenderer sprite in this.tileRenderers) {
-				Destroy(sprite);
-			}
+			float currentHeight = this.groundPosition.y - (this.groundSize.y * 0.5f) + (this.tileTopCenter - 0.5f) * 0.5f;
 
-			float currentHeight = this.groundPosition.y - (this.groundSize.y / 2) - 1.0f - this.tileStep;
+			this.tileCounts = GetTileCounts();
 
-			int tileRowCount = (int) Mathf.Ceil(this.groundSize.y / this.tileStep) + 1;
-
-			this.tileRenderers.Clear();
 			this.tiles.Clear();
 
-			for (int tileY = 0; tileY < tileRowCount; tileY++, currentHeight += this.tileStep) {
-				GameObject rowObject = GameObject.Instantiate(this.groundTileSpritePrefab, this.transform);
-				rowObject.name = "background_row_" + tileY;
-				rowObject.SetActive(true);
-
-				SpriteRenderer rowSprite = rowObject.GetComponent<SpriteRenderer>();
-				rowSprite.drawMode = SpriteDrawMode.Tiled;
-				rowSprite.size = new Vector2(this.groundSize.x + (tileY % 2), 1);
-				rowSprite.transform.position = new Vector3(
-					this.groundPosition.x,
-					currentHeight
-				);
-				rowSprite.sortingOrder = tileRowCount - tileY;
-
-				this.tileRenderers.Add(rowSprite);
-
-				for (int tileX = 0; tileX < this.groundSize.x + (tileY % 2); tileX++) {
-					float xOffset = tileX - (this.groundSize.x - (1 - (tileY % 2))) / 2.0f;
+			for (int tileY = 0; tileY < tileCounts.y; tileY++, currentHeight += this.tileStep) {
+				for (int tileX = 0; tileX < this.tileCounts.x; tileX++) {
+					float xOffset = tileX + (tileY % 2) * 0.5f - (this.groundSize.x * 0.5f);
 
 					GroundTile tile = new GroundTile();
-					tile.position = new Vector2(this.groundPosition.x + xOffset, currentHeight + tileTopCenter);
-					tile.gridPosition = new Vector2Int(tileX - ((tileY + 1) / 2), tileY);
+					tile.position = new Vector2(this.groundPosition.x + xOffset, currentHeight);
+					tile.gridPosition = new Vector2Int(tileX, tileY);
 					tile.walkable = true;
-					tile.layer = tileRowCount - tileY;
+					tile.layer = tileCounts.y - tileY;
 
 					this.tiles.Add(tile);
 				}
 			}
-
-			this.groundTileSpritePrefab.SetActive(false);
 		}
 
 		void Awake() {
-			Assert.IsNotNull(this.groundTileSpritePrefab);
-			Assert.IsNotNull(this.groundTileSpritePrefab.GetComponent<SpriteRenderer>());
 			Assert.AreNotEqual(this.tileStep, 0.0f);
 
 			RegenerateTerrain();
 			
-			this.highlight.gameObject.SetActive(false);
-
 			this.mousePosAction = InputSystem.actions.FindAction("Point");
+		}
+
+		void Update() {
+			if (GetTileCounts() != this.tileCounts) {
+				RegenerateTerrain();
+				
+				this.mousePosAction = InputSystem.actions.FindAction("Point");
+			}
+
+			// GetComponent<GroundRenderer>().UpdateVisual(this.groundSize, this.tiles);
+			GetComponentInChildren<GroundRenderer>(true).UpdateVisual(this.tileCounts, this.tiles);
 		}
 
 		public GroundTile[] FindPath(Vector2Int start, Vector2Int end, int maxSteps = int.MaxValue) {
@@ -130,7 +113,7 @@ namespace FullMetalAcorn {
 
 		public GroundTile[] FindPath(GroundTile start, GroundTile end, int maxSteps = int.MaxValue) {
 			int GetTileIndex(GroundTile t) {
-				return t.gridPosition.y * (this.groundSize.x + 1) + t.gridPosition.x;
+				return t.gridPosition.y * (this.tileCounts.x + 1) + t.gridPosition.x;
 			}
 
 			if (start == null || end == null) {
@@ -217,6 +200,7 @@ namespace FullMetalAcorn {
 					position.y > d4
 				) {
 					targetTile = tile;
+					targetTile.highlighted = true;
 					found = true;
 					
 					break;
@@ -251,27 +235,15 @@ namespace FullMetalAcorn {
 		}
 
 		public void HighlightTile(GroundTile tile) {
-			if (tile != this.currentHighlightedTile) {
-				if (this.currentHighlightedTile && this.currentHighlightedTile.occupant) {
-					this.currentHighlightedTile.occupant.OnExitHover();
-				}
-
-				if (tile && tile.occupant) {
-					tile.occupant.OnEnterHover();
-				}
-
-				this.currentHighlightedTile = tile;
+			if (tile != null) {
+				tile.highlighted = true;
 			}
+		}
 
-			if (!tile) {
-				this.highlight.gameObject.SetActive(false);
-
-				return;
+		public void OnDrawGizmos() {
+			foreach (var tile in this.tiles) {
+				Gizmos.DrawSphere(tile.position, 0.1f);
 			}
-
-			this.highlight.gameObject.SetActive(true);
-			this.highlight.transform.position = tile.position + Vector2.down * tileTopCenter;
-			this.highlight.sortingOrder = tile.layer;
 		}
 	}
 }
