@@ -93,18 +93,10 @@ namespace FullMetalAcorn {
 			if (this.current && e.affectedTile.IsFree()) {
 				GroundController ground = Level.Instance.Ground;
 
-				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile, this.current.MovementRange);
+				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile);
 
 				if (path != null) {
-					string pathAsString = path[0].gridPosition.ToString();
-
-					for (int i = 1; i < path.Length; i++) {
-						pathAsString += " > " + path[i].gridPosition.ToString();
-					}
-
-					Debug.Log(pathAsString);
-
-					DrawPath(path, Color.green);
+					DrawPath(path, path.Length <= this.current.MovementRange ? Color.green : Color.red);
 				}
 			}
 		}
@@ -144,12 +136,7 @@ namespace FullMetalAcorn {
 				activePath.mover.LastMovement = nextPos - activePath.mover.transform.position;
 				activePath.mover.transform.position = nextPos;
 
-				if (activePath.tiles.Length == activePath.mover.MovementRange + 1) {
-					DrawPath(activePath.tiles, Color.red, startPoint + frac);
-				}
-				else {
-					DrawPath(activePath.tiles, Color.green, startPoint + frac);
-				}
+				DrawPath(activePath.tiles, Color.green, startPoint + frac);
 			}
 
 			foreach (GridPath removed in pathsToRemove) {

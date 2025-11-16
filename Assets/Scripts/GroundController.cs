@@ -41,7 +41,6 @@ namespace FullMetalAcorn {
 		}
 
 		public GroundTile GetTileAt(int x, int y) {
-
 			int origY = y - x;
 			int origX = x + (origY / 2);
 
@@ -144,7 +143,10 @@ namespace FullMetalAcorn {
 
 		public GroundTile[] FindPath(GroundTile start, GroundTile end, int maxSteps = int.MaxValue) {
 			int GetTileIndex(GroundTile t) {
-				return t.gridPosition.y * this.tileCounts.x + t.gridPosition.x;
+				int origY = t.gridPosition.y - t.gridPosition.x;
+				int origX = t.gridPosition.x + (origY / 2);
+
+				return origY * this.tileCounts.x + origX;
 			}
 
 			if (start == null || end == null) {
