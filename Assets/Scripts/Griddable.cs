@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace FullMetalAcorn {
 	public class Griddable : MonoBehaviour {
+		[SerializeField]
+		private int m_size = 1;
+
 		private GroundTile m_tile;
 
 		public GroundTile Tile {
@@ -15,6 +18,11 @@ namespace FullMetalAcorn {
 				}
 				m_tile = value;
 			}
+		}
+
+		public int Size {
+			get => m_size;
+			set => m_size = value;
 		}
 
 		public void SnapToGrid() {
@@ -31,6 +39,11 @@ namespace FullMetalAcorn {
 
 				this.Tile = closestTile;
 			}
+
+			TileEventManager.Emit(new GriddableMovementEvent() {
+				actor = this,
+				to = this.Tile
+			});
 		}
 
 		public virtual void OnEnterHover() { }

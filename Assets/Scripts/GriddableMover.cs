@@ -72,7 +72,7 @@ namespace FullMetalAcorn {
 			else if (this.current && e.affectedTile.IsFree()) {
 				GroundController ground = Level.Instance.Ground;
 
-				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile, this.current.MovementRange);
+				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile, this.current);
 
 				if (path != null) {
 					this.activePaths.AddLast(new GridPath(
@@ -93,7 +93,7 @@ namespace FullMetalAcorn {
 			if (this.current && e.affectedTile.IsFree()) {
 				GroundController ground = Level.Instance.Ground;
 
-				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile);
+				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile, this.current, true);
 
 				if (path != null) {
 					DrawPath(path, path.Length <= this.current.MovementRange + 1 ? Color.green : Color.red);
@@ -112,6 +112,13 @@ namespace FullMetalAcorn {
 				if (activePath.Finished) {
 					activePath.mover.transform.position = activePath.tiles[activePath.tiles.Length - 1].position;
 					activePath.tiles[activePath.tiles.Length - 1].walkable = true;
+
+					TileEventManager.Emit(new GriddableMovementEvent() {
+						actor = activePath.mover,
+						from = activePath.mover.Tile,
+						to = activePath.tiles[activePath.tiles.Length - 1]
+					});
+
 					activePath.mover.Tile = activePath.tiles[activePath.tiles.Length - 1];
 
 					pathsToRemove.Add(activePath);

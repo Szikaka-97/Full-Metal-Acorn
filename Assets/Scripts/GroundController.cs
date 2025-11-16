@@ -79,6 +79,38 @@ namespace FullMetalAcorn {
 			}
 		}
 
+		private void OnGriddableMove(GriddableMovementEvent e) {
+			int griddableSize = e.actor.Size;
+
+			if (e.from) {
+				GroundTile from = e.from;
+
+				for (int x = 0; x < griddableSize; x++) {
+					for (int y = 0; y < griddableSize; y++) {
+						GroundTile near = GetTileAt(from.gridPosition + new Vector2Int(-x, y));
+
+						if (near) {
+							near.occupant = null;
+						}
+					}
+				}
+			}
+
+			if (e.to) {
+				GroundTile to = e.to;
+
+				for (int x = 0; x < griddableSize; x++) {
+					for (int y = 0; y < griddableSize; y++) {
+						GroundTile near = GetTileAt(to.gridPosition + new Vector2Int(-x, y));
+
+						if (near) {
+							near.occupant = e.actor;
+						}
+					}
+				}
+			}
+		}
+
 		void Awake() {
 			Assert.AreNotEqual(this.tileStep, 0.0f);
 
@@ -129,19 +161,19 @@ namespace FullMetalAcorn {
 			GetComponentInChildren<GroundRenderer>(true).UpdateVisual(this.tileCounts, this.tiles);
 		}
 
-		public GroundTile[] FindPath(Vector2Int start, Vector2Int end, int maxSteps = int.MaxValue) {
-			return FindPath(GetTileAt(start.x, start.y), GetTileAt(end.x, end.y), maxSteps);
+		public GroundTile[] FindPath(Vector2Int start, Vector2Int end, Moveable actor, bool ignoreRange = false) {
+			return FindPath(GetTileAt(start.x, start.y), GetTileAt(end.x, end.y), actor, ignoreRange);
 		}
 
-		public GroundTile[] FindPath(GroundTile start, Vector2Int end, int maxSteps = int.MaxValue) {
-			return FindPath(start, GetTileAt(end.x, end.y), maxSteps);
+		public GroundTile[] FindPath(GroundTile start, Vector2Int end, Moveable actor, bool ignoreRange = false) {
+			return FindPath(start, GetTileAt(end.x, end.y), actor, ignoreRange);
 		}
 
-		public GroundTile[] FindPath(Vector2Int start, GroundTile end, int maxSteps = int.MaxValue) {
-			return FindPath(GetTileAt(start.x, start.y), end, maxSteps);
+		public GroundTile[] FindPath(Vector2Int start, GroundTile end, Moveable actor, bool ignoreRange = false) {
+			return FindPath(GetTileAt(start.x, start.y), end, actor, ignoreRange);
 		}
 
-		public GroundTile[] FindPath(GroundTile start, GroundTile end, int maxSteps = int.MaxValue) {
+		public GroundTile[] FindPath(GroundTile start, GroundTile end, Moveable actor, bool ignoreRange = false) {
 			int GetTileIndex(GroundTile t) {
 				int origY = t.gridPosition.y - t.gridPosition.x;
 				int origX = t.gridPosition.x + (origY / 2);
@@ -178,7 +210,7 @@ namespace FullMetalAcorn {
 			do {
 				currentNode = movementQueue.Dequeue();
 
-				if (currentNode.distance > maxSteps) {
+				if (!ignoreRange && currentNode.distance > actor.MovementRange) {
 					return null;
 				}
 
@@ -187,7 +219,23 @@ namespace FullMetalAcorn {
 				for (int i = 0; i < 4; i++) {
 					GroundTile next = GetTileAt(currentNode.tile.gridPosition + neighbours[i]);
 
-					if (next && next.IsFree() && !visitedStates[GetTileIndex(next)]) {
+					if (next && !visitedStates[GetTileIndex(next)]) {
+						bool free = true;
+
+						for (int x = 0; x < actor.Size && free; x++) {
+							for (int y = 0; y < actor.Size && free; y++) {
+								GroundTile near = GetTileAt(next.gridPosition + new Vector2Int(-x, y));
+
+								if (near && !near.IsFree() && near.occupant != actor) {
+									free = false;
+								}
+							}
+						}
+
+						if (!free) {
+							continue;
+						}
+
 						visitedStates[GetTileIndex(next)] = true;
 
 						movementQueue.Enqueue(new PathfindNode(next, currentNode, currentNode.distance + 1));
@@ -272,23 +320,25 @@ namespace FullMetalAcorn {
 			return TryGetTileOnPosition(pointedPosition, out tile);
 		}
 
-		public void HighlightTile(GroundTile tile) {
-			if (tile != null) {
-				tile.highlighted = true;
-			}
+		public void OnEnable() {
+			TileEventManager.Subscribe(OnGriddableMove);
+		}
+
+		public void OnDisable() {
+			TileEventManager.Unsubscribe(OnGriddableMove);
 		}
 
 		public void OnDrawGizmos() {
-			int tileIndex = 0;
+// 			int tileIndex = 0;
 
-			foreach (var tile in this.tiles) {
-				Gizmos.DrawSphere(tile.position, 0.1f);
-#if UNITY_EDITOR
-				UnityEditor.Handles.Label((Vector3) tile.position + Vector3.up * 0.15f, tileIndex.ToString() + ": " + tile.gridPosition.ToString() + " (" + (GetTileAt(tile.gridPosition) == tile).ToString() + ")");
+// 			foreach (var tile in this.tiles) {
+// 				Gizmos.DrawSphere(tile.position, 0.1f);
+// #if UNITY_EDITOR
+// 				UnityEditor.Handles.Label((Vector3) tile.position + Vector3.up * 0.15f, tileIndex.ToString() + ": " + tile.gridPosition.ToString() + " (" + (GetTileAt(tile.gridPosition) == tile).ToString() + ")");
 
-				tileIndex++;
-#endif
-			}
+// 				tileIndex++;
+// #endif
+// 			}
 		}
 	}
 }

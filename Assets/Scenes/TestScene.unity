@@ -149,8 +149,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0b1e340b16fdf8a6bf2dea8cf10cfea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.Moveable
-  movementRange: 0
-  movementSpeed: 0
+  m_size: 2
+  movementRange: 5
+  movementSpeed: 1
 --- !u!4 &470251411
 Transform:
   m_ObjectHideFlags: 0
@@ -269,6 +270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0b1e340b16fdf8a6bf2dea8cf10cfea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.Moveable
+  m_size: 1
   movementRange: 8
   movementSpeed: 2
 --- !u!212 &712518485
