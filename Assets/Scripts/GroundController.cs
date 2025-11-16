@@ -177,6 +177,8 @@ namespace FullMetalAcorn {
 
 			do {
 				currentNode = movementQueue.Dequeue();
+
+				neighbours = neighbours.OrderBy( direction => -Vector2.Dot(direction, end.gridPosition - currentNode.tile.gridPosition) + Vector2.Dot(direction, Vector2.right) * 0.01f ).ToArray();
 				
 				for (int i = 0; i < 4; i++) {
 					GroundTile next = GetTileAt(currentNode.tile.gridPosition + neighbours[i]);
