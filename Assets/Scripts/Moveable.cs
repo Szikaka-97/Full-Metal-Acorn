@@ -18,6 +18,10 @@ namespace FullMetalAcorn {
 
 		public Vector2 LastMovement { get; set; }
 
+		public virtual bool IsMouseMoveable {
+			get => true;
+		}
+
 		void Start() {
 			SnapToGrid();
 		}

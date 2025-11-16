@@ -61,7 +61,7 @@ namespace FullMetalAcorn {
 		}
 
 		void OnTileClicked(TileClickEvent e) {
-			if (e.affectedTile.occupant is Moveable) {
+			if (e.affectedTile.occupant is Moveable && (e.affectedTile.occupant as Moveable).IsMouseMoveable) {
 				if (this.current == e.affectedTile.occupant) {
 					this.current = null;
 				}
