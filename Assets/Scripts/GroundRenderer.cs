@@ -100,6 +100,14 @@ namespace FullMetalAcorn {
 			this.groundTileMaterial.SetBuffer("dataBuffer", this.groundDataBuffer);
 		}
 
+		void OnTileHover(TileHoverEvent e) {
+			e.affectedTile.highlighted = e.newState == TileHoverState.Enter;
+		}
+
+		void OnEnable() {
+			TileEventManager.Subscribe(OnTileHover);
+		}
+
 		void OnDisable() {
 			if (this.groundDataBuffer != null) {
 				this.groundDataBuffer.Release();
@@ -109,6 +117,8 @@ namespace FullMetalAcorn {
 			if (this.argsBuffer != null)
 				this.argsBuffer.Release();
 			this.argsBuffer = null;
+
+			TileEventManager.Unsubscribe(OnTileHover);
 		}
 	}
 }

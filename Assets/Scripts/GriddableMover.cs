@@ -13,8 +13,6 @@ namespace FullMetalAcorn {
 
 		private LinkedList<GridPath> activePaths = new LinkedList<GridPath>();
 
-		private InputAction mouseClickAction;
-
 		class GridPath {
 			public GroundTile[] tiles;
 			public Moveable mover;
@@ -37,10 +35,6 @@ namespace FullMetalAcorn {
 			}
 
 			return false;
-		}
-
-		void Awake() {
-			mouseClickAction = InputSystem.actions.FindAction("Click");
 		}
 
 		void DrawPath(GroundTile[] path, Color color, float progress = 0) {
@@ -66,58 +60,57 @@ namespace FullMetalAcorn {
 			}
 		}
 
-		void Update() {
-			GroundController ground = Level.Instance.Ground;
-
-			if (ground.TryGetTileUnderCursor(out var tile)) {
-				if (this.current && tile.IsFree()) {
-					GroundTile[] path = ground.FindPath(this.current.Tile, tile, this.current.MovementRange);
-
-					if (path != null) {
-						if (path.Length == this.current.MovementRange + 1) {
-							DrawPath(path, Color.red);
-						}
-						else {
-							DrawPath(path, Color.green);
-						}
-
-						ground.HighlightTile(tile);
-
-						if (this.mouseClickAction.WasPressedThisFrame()) {
-							if (path != null) {
-								this.activePaths.AddLast(new GridPath(
-									path,
-									this.current
-								));
-
-								path[path.Length - 1].walkable = false;
-
-								this.current.Tile = null;
-
-								this.current = null;
-							}
-						}
-					}
-					else {
-						ground.HighlightTile(null);
-					}
-				}
-				else if (tile.occupant && tile.occupant is Moveable) {
-					ground.HighlightTile(tile);
-
-					if (this.mouseClickAction.WasPressedThisFrame()) {
-						if (this.current == tile.occupant) {
-							this.current = null;
-						}
-						else {
-							this.current = tile.occupant as Moveable;
-						}
-					}
+		void OnTileClicked(TileClickEvent e) {
+			if (e.affectedTile.occupant is Moveable) {
+				if (this.current == e.affectedTile.occupant) {
+					this.current = null;
 				}
 				else {
-					ground.HighlightTile(null);
+					this.current = e.affectedTile.occupant as Moveable;
 				}
 			}
+			else if (this.current && e.affectedTile.IsFree()) {
+				GroundController ground = Level.Instance.Ground;
+
+				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile, this.current.MovementRange);
+
+				if (path != null) {
+					this.activePaths.AddLast(new GridPath(
+						path,
+						this.current
+					));
+
+					path[path.Length - 1].walkable = false;
+
+					this.current.Tile = null;
+
+					this.current = null;
+				}
+			}
+		}
+
+		void OnTileHovered(TileHoverEvent e) {
+			if (this.current && e.affectedTile.IsFree()) {
+				GroundController ground = Level.Instance.Ground;
+
+				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile, this.current.MovementRange);
+
+				if (path != null) {
+					string pathAsString = path[0].gridPosition.ToString();
+
+					for (int i = 1; i < path.Length; i++) {
+						pathAsString += " > " + path[i].gridPosition.ToString();
+					}
+
+					Debug.Log(pathAsString);
+
+					DrawPath(path, Color.green);
+				}
+			}
+		}
+
+		void Update() {
+			GroundController ground = Level.Instance.Ground;
 
 			List<GridPath> pathsToRemove = new List<GridPath>();
 
@@ -162,6 +155,16 @@ namespace FullMetalAcorn {
 			foreach (GridPath removed in pathsToRemove) {
 				this.activePaths.Remove(removed);
 			}
+		}
+
+		void OnEnable() {
+			TileEventManager.Subscribe(OnTileClicked);
+			TileEventManager.Subscribe(OnTileHovered);
+		}
+
+		void OnDisable() {
+			TileEventManager.Unsubscribe(OnTileClicked);
+			TileEventManager.Subscribe(OnTileHovered);
 		}
 	}
 }

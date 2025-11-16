@@ -30,28 +30,28 @@ namespace FullMetalAcorn {
 		[SerializeField]
 		private float tileTopCenter = 0.75f;
 		private InputAction mousePosAction;
+		private InputAction mouseClickAction;
 
 		private Vector2Int tileCounts;
 		private List<GroundTile> tiles = new List<GroundTile>();
+		private GroundTile hoveredTile;
 
 		public GroundTile GetTileAt(Vector2Int gridPos) {
 			return GetTileAt(gridPos.x, gridPos.y);
 		}
 
 		public GroundTile GetTileAt(int x, int y) {
-			int baseX = -y / 2;
 
-			if (x < baseX || x >= baseX + this.tileCounts.x + (y % 2)) {
+			int origY = y - x;
+			int origX = x + (origY / 2);
+
+			if (origX < 0 || origX >= this.tileCounts.x || origY < 0 || origY >= this.tileCounts.y) {
 				return null;
 			}
 
-			int index = y * (this.tileCounts.x + 1) + x;
-
-			if (index >= 0 && index < this.tiles.Count) {
-				return this.tiles[index];
-			}
-
-			return null;
+			int index = origY * this.tileCounts.x + origX;
+			
+			return this.tiles[index];
 		}
 
 		private Vector2Int GetTileCounts() {
@@ -71,7 +71,7 @@ namespace FullMetalAcorn {
 
 					GroundTile tile = new GroundTile();
 					tile.position = new Vector2(this.groundPosition.x + xOffset, currentHeight);
-					tile.gridPosition = new Vector2Int(tileX, tileY);
+					tile.gridPosition = new Vector2Int(tileX - tileY / 2, tileY + tileX - tileY / 2);
 					tile.walkable = true;
 					tile.layer = tileCounts.y - tileY;
 
@@ -86,6 +86,7 @@ namespace FullMetalAcorn {
 			RegenerateTerrain();
 			
 			this.mousePosAction = InputSystem.actions.FindAction("Point");
+			this.mouseClickAction = InputSystem.actions.FindAction("Click");
 		}
 
 		void Update() {
@@ -93,9 +94,39 @@ namespace FullMetalAcorn {
 				RegenerateTerrain();
 				
 				this.mousePosAction = InputSystem.actions.FindAction("Point");
+				this.mouseClickAction = InputSystem.actions.FindAction("Click");
 			}
 
-			// GetComponent<GroundRenderer>().UpdateVisual(this.groundSize, this.tiles);
+			if (TryGetTileUnderCursor(out GroundTile newHoveredTile)) {
+				if (this.hoveredTile) {
+					TileEventManager.Emit(new TileHoverEvent() {
+						newState = TileHoverState.Exit,
+						affectedTile = this.hoveredTile
+					});
+				}
+
+				TileEventManager.Emit(new TileHoverEvent() {
+					newState = TileHoverState.Enter,
+					affectedTile = newHoveredTile
+				});
+
+				this.hoveredTile = newHoveredTile;
+
+				if (this.mouseClickAction.WasPressedThisFrame()) {
+					TileEventManager.Emit(new TileClickEvent() {
+						affectedTile = newHoveredTile
+					});
+				}
+			}
+			else if (this.hoveredTile) {
+				TileEventManager.Emit(new TileHoverEvent() {
+					newState = TileHoverState.Exit,
+					affectedTile = this.hoveredTile
+				});
+
+				this.hoveredTile = null;
+			}
+
 			GetComponentInChildren<GroundRenderer>(true).UpdateVisual(this.tileCounts, this.tiles);
 		}
 
@@ -113,7 +144,7 @@ namespace FullMetalAcorn {
 
 		public GroundTile[] FindPath(GroundTile start, GroundTile end, int maxSteps = int.MaxValue) {
 			int GetTileIndex(GroundTile t) {
-				return t.gridPosition.y * (this.tileCounts.x + 1) + t.gridPosition.x;
+				return t.gridPosition.y * this.tileCounts.x + t.gridPosition.x;
 			}
 
 			if (start == null || end == null) {
@@ -136,8 +167,8 @@ namespace FullMetalAcorn {
 			movementQueue.Enqueue(currentNode);
 
 			Vector2Int[] neighbours = {
-				Vector2Int.left + Vector2Int.up,
-				Vector2Int.right + Vector2Int.down,
+				Vector2Int.left,
+				Vector2Int.right,
 				Vector2Int.down,
 				Vector2Int.up
 			};
@@ -200,7 +231,6 @@ namespace FullMetalAcorn {
 					position.y > d4
 				) {
 					targetTile = tile;
-					targetTile.highlighted = true;
 					found = true;
 					
 					break;
@@ -241,8 +271,15 @@ namespace FullMetalAcorn {
 		}
 
 		public void OnDrawGizmos() {
+			int tileIndex = 0;
+
 			foreach (var tile in this.tiles) {
 				Gizmos.DrawSphere(tile.position, 0.1f);
+#if UNITY_EDITOR
+				UnityEditor.Handles.Label((Vector3) tile.position + Vector3.up * 0.15f, tileIndex.ToString() + ": " + tile.gridPosition.ToString() + " (" + (GetTileAt(tile.gridPosition) == tile).ToString() + ")");
+
+				tileIndex++;
+#endif
 			}
 		}
 	}
