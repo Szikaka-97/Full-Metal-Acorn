@@ -128,7 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 470251411}
-  - component: {fileID: 470251410}
+  - component: {fileID: 470251413}
   - component: {fileID: 470251412}
   m_Layer: 0
   m_Name: Evil Squirrel
@@ -137,21 +137,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &470251410
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 470251409}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0b1e340b16fdf8a6bf2dea8cf10cfea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.Moveable
-  m_size: 2
-  movementRange: 5
-  movementSpeed: 1
 --- !u!4 &470251411
 Transform:
   m_ObjectHideFlags: 0
@@ -225,6 +210,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &470251413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 470251409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e320406ad0b16136fbab4d8addfca765, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.Actor
+  m_size: 2
+  movementRange: 5
+  movementSpeed: 1
+  m_health: 2
+  m_playerTeam: 0
 --- !u!1 &712518481
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,7 +236,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 712518483}
-  - component: {fileID: 712518484}
+  - component: {fileID: 712518486}
   - component: {fileID: 712518485}
   m_Layer: 0
   m_Name: Good Squirrel
@@ -258,21 +260,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &712518484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 712518481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0b1e340b16fdf8a6bf2dea8cf10cfea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.Moveable
-  m_size: 1
-  movementRange: 8
-  movementSpeed: 2
 --- !u!212 &712518485
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -331,6 +318,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &712518486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 712518481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e320406ad0b16136fbab4d8addfca765, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FullMetalAcorn::FullMetalAcorn.Actor
+  m_size: 1
+  movementRange: 8
+  movementSpeed: 2
+  m_health: 1
+  m_playerTeam: 1
 --- !u!1 &881978025
 GameObject:
   m_ObjectHideFlags: 0
