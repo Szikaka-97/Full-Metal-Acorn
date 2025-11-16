@@ -96,7 +96,7 @@ namespace FullMetalAcorn {
 				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile);
 
 				if (path != null) {
-					DrawPath(path, path.Length <= this.current.MovementRange ? Color.green : Color.red);
+					DrawPath(path, path.Length <= this.current.MovementRange + 1 ? Color.green : Color.red);
 				}
 			}
 		}
