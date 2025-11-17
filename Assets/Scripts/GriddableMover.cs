@@ -89,6 +89,10 @@ namespace FullMetalAcorn {
 					this.currentPath = null;
 				}
 			}
+			else {
+				this.current = null;
+				this.currentPath = null;
+			}
 		}
 
 		void OnTileHovered(TileHoverEvent e) {

@@ -7,6 +7,9 @@ namespace FullMetalAcorn {
 
 		[SerializeField]
 		private bool m_playerTeam;
+
+		[SerializeField]
+		private OneShotAnimation m_deathEffect;
 		
 		public int Health {
 			get => m_health;
@@ -28,7 +31,12 @@ namespace FullMetalAcorn {
         public override bool IsMouseMoveable => this.m_playerTeam;
 		
 		public void Die() {
-			this.gameObject.SetActive(false);
+			if (this.m_deathEffect) {
+				this.m_deathEffect.enabled = true;
+			}
+			else {
+				this.gameObject.SetActive(false);
+			}
 		}
 	}
 }
