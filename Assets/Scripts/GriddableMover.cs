@@ -11,6 +11,7 @@ namespace FullMetalAcorn {
 
 		private Moveable current;
 
+		private GridPath currentPath;
 		private LinkedList<GridPath> activePaths = new LinkedList<GridPath>();
 
 		class GridPath {
@@ -85,6 +86,7 @@ namespace FullMetalAcorn {
 					this.current.Tile = null;
 
 					this.current = null;
+					this.currentPath = null;
 				}
 			}
 		}
@@ -96,13 +98,23 @@ namespace FullMetalAcorn {
 				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile, this.current, true);
 
 				if (path != null) {
-					DrawPath(path, path.Length <= this.current.MovementRange + 1 ? Color.green : Color.red);
+					currentPath = new GridPath(path, this.current);
 				}
+				else {
+					this.currentPath = null;
+				}
+			}
+			else {
+				this.currentPath = null;
 			}
 		}
 
 		void Update() {
 			GroundController ground = Level.Instance.Ground;
+
+			if (this.currentPath != null) {
+				DrawPath(this.currentPath.tiles, this.currentPath.tiles.Length <= this.currentPath.mover.MovementRange + 1 ? Color.green : Color.red);
+			}
 
 			List<GridPath> pathsToRemove = new List<GridPath>();
 

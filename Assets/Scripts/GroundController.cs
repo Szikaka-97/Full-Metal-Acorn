@@ -129,19 +129,21 @@ namespace FullMetalAcorn {
 			}
 
 			if (TryGetTileUnderCursor(out GroundTile newHoveredTile)) {
-				if (this.hoveredTile) {
+				if (newHoveredTile != this.hoveredTile) {
+					if (this.hoveredTile) {
+						TileEventManager.Emit(new TileHoverEvent() {
+							newState = TileHoverState.Exit,
+							affectedTile = this.hoveredTile
+						});
+					}
+
 					TileEventManager.Emit(new TileHoverEvent() {
-						newState = TileHoverState.Exit,
-						affectedTile = this.hoveredTile
+						newState = TileHoverState.Enter,
+						affectedTile = newHoveredTile
 					});
+
+					this.hoveredTile = newHoveredTile;
 				}
-
-				TileEventManager.Emit(new TileHoverEvent() {
-					newState = TileHoverState.Enter,
-					affectedTile = newHoveredTile
-				});
-
-				this.hoveredTile = newHoveredTile;
 
 				if (this.mouseClickAction.WasPressedThisFrame()) {
 					TileEventManager.Emit(new TileClickEvent() {
