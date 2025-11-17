@@ -46,6 +46,13 @@ namespace FullMetalAcorn {
 			});
 		}
 
+		public void OnDisable() {
+			TileEventManager.Emit(new GriddableMovementEvent() {
+				actor = this,
+				from = this.Tile
+			});
+		}
+
 		public virtual void OnEnterHover() { }
 
 		public virtual void OnExitHover() { }

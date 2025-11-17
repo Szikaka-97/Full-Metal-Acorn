@@ -21,6 +21,10 @@ namespace FullMetalAcorn {
 			}
 		}
 
+		public bool IsPlayerTeam {
+			get => m_playerTeam;
+		}
+
         public override bool IsMouseMoveable => this.m_playerTeam;
 		
 		public void Die() {
