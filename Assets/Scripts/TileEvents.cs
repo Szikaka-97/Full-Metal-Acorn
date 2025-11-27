@@ -17,9 +17,9 @@ namespace FullMetalAcorn {
 		public delegate void TileClickEventReceiver(TileClickEvent e);
 		public delegate void GriddableMovementEventReceiver(GriddableMovementEvent e);
 
-		private static event TileHoverEventReceiver hoverEvents;
-		private static event TileClickEventReceiver clickEvents;
-		private static event GriddableMovementEventReceiver movementEvents;
+		private static event TileHoverEventReceiver hoverEvents = e => {};
+		private static event TileClickEventReceiver clickEvents = e => {};
+		private static event GriddableMovementEventReceiver movementEvents = e => {};
 
 		public static void Subscribe(TileHoverEventReceiver r) {
 			if (r != null) {
