@@ -6,7 +6,18 @@ namespace FullMetalAcorn {
 		public Sprite[] frames;
 		public SpriteRenderer sprite;
 
-		void Update() {
+        public ActiveAttackType actorAttackType ;
+        private void Start()
+        {
+
+            actorAttackType = FindFirstObjectByType<ActiveAttackType>();
+
+            if (actorAttackType == null)
+                Debug.LogError("No ActiveAttackType found in scene!");
+        }
+
+
+        void Update() {
 			progress += Time.deltaTime;
 
 			int frameIndex = (int) (progress * 10);
@@ -17,7 +28,19 @@ namespace FullMetalAcorn {
 				return;
 			}
 
-			sprite.sprite = frames[frameIndex];
+			switch(actorAttackType.selected_attack_type)
+            {
+                case AttackType.MELEE:
+                    break;
+                case AttackType.RANGED:
+                    sprite.color = Color.pink;
+                    break;
+                case AttackType.SPECIAL:
+                    sprite.color = Color.purple;
+                    break;
+            }
+
+            sprite.sprite = frames[frameIndex];
 		}
 
 		void OnEnable() {

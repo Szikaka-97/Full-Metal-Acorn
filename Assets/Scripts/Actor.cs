@@ -10,8 +10,13 @@ namespace FullMetalAcorn {
 
 		[SerializeField]
 		private OneShotAnimation m_deathEffect;
-		
-		public int Health {
+
+        // private static MenuScript menuScript;
+        //	private AttackType selectedAttackType = menuScript.selected_attack_type; 
+        [SerializeField]
+        public ActiveAttackType m_selectedAttackType;
+
+        public int Health {
 			get => m_health;
 			set {
 				m_health = value;
