@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 namespace FullMetalAcorn {
 	[RequireComponent(typeof(GroundRenderer))]
@@ -29,6 +31,9 @@ namespace FullMetalAcorn {
 		private float tileStep = 0.25f;
 		[SerializeField]
 		private float tileTopCenter = 0.75f;
+		private EventSystem eventSystem;
+		private GraphicRaycaster canvasRaycaster;
+
 		private InputAction mousePosAction;
 		private InputAction mouseClickAction;
 
@@ -118,6 +123,9 @@ namespace FullMetalAcorn {
 			
 			this.mousePosAction = InputSystem.actions.FindAction("Mouse Point");
 			this.mouseClickAction = InputSystem.actions.FindAction("Mouse Click");
+
+			this.eventSystem = GameObject.FindFirstObjectByType<EventSystem>();
+			this.canvasRaycaster = GameObject.FindFirstObjectByType<GraphicRaycaster>();
 		}
 
 		void Update() {
@@ -129,6 +137,17 @@ namespace FullMetalAcorn {
 			}
 
 			if (TryGetTileUnderCursor(out GroundTile newHoveredTile)) {
+				if (canvasRaycaster && eventSystem) {
+					PointerEventData pointerEventData = new PointerEventData(eventSystem);
+					pointerEventData.position = this.mousePosAction.ReadValue<Vector2>();
+					List<RaycastResult> results = new List<RaycastResult>();
+					canvasRaycaster.Raycast(pointerEventData, results);
+
+					if (results.Count > 0) {
+						newHoveredTile = null;
+					}
+				}
+
 				if (newHoveredTile != this.hoveredTile) {
 					if (this.hoveredTile) {
 						TileEventManager.Emit(new TileHoverEvent() {
@@ -137,15 +156,17 @@ namespace FullMetalAcorn {
 						});
 					}
 
-					TileEventManager.Emit(new TileHoverEvent() {
-						newState = TileHoverState.Enter,
-						affectedTile = newHoveredTile
-					});
+					if (newHoveredTile) {
+						TileEventManager.Emit(new TileHoverEvent() {
+							newState = TileHoverState.Enter,
+							affectedTile = newHoveredTile
+						});
+					}
 
 					this.hoveredTile = newHoveredTile;
 				}
 
-				if (this.mouseClickAction.WasPressedThisFrame()) {
+				if (hoveredTile && this.mouseClickAction.WasPressedThisFrame()) {
 					TileEventManager.Emit(new TileClickEvent() {
 						affectedTile = newHoveredTile
 					});

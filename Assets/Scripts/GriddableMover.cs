@@ -96,19 +96,24 @@ namespace FullMetalAcorn {
 		}
 
 		void OnTileHovered(TileHoverEvent e) {
-			if (this.current && e.affectedTile.IsFree()) {
-				GroundController ground = Level.Instance.Ground;
+			if (e.newState == TileHoverState.Enter) {
+				if (this.current && e.affectedTile.IsFree()) {
+					GroundController ground = Level.Instance.Ground;
 
-				GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile, this.current, true);
+					GroundTile[] path = ground.FindPath(this.current.Tile, e.affectedTile, this.current, true);
 
-				if (path != null) {
-					currentPath = new GridPath(path, this.current);
+					if (path != null) {
+						currentPath = new GridPath(path, this.current);
+					}
+					else {
+						this.currentPath = null;
+					}
 				}
 				else {
 					this.currentPath = null;
 				}
 			}
-			else {
+			else if (e.newState == TileHoverState.Exit) {
 				this.currentPath = null;
 			}
 		}
