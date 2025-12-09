@@ -8,50 +8,34 @@ namespace FullMetalAcorn {
 		[SerializeField]
 		private Rect cameraMoveBounds = new Rect(-16, -9, 32, 18);
 		[SerializeField]
-		private float cameraScrollBoundary = 100;
-		[SerializeField]
-		private float cameraScrollSpeed = 1;
+		private float cameraMoveSpeed = 1;
 
-		private InputAction mousePosAction;
+		private InputAction cameraMoveAction;
 
 		void Awake() {
-			this.mousePosAction = InputSystem.actions.FindAction("Point");
+			this.cameraMoveAction = InputSystem.actions.FindAction("Camera Move");
 		}
 
 		void Update() {
 			if (this.gameCamera) {
-				Vector2 cursorPos = this.mousePosAction.ReadValue<Vector2>();
-
-				if (cursorPos.x <= 0 || cursorPos.x > Screen.width || cursorPos.y <= 0 || cursorPos.y > Screen.height) {
-					return;
-				}
-
 				Rect worldSpaceRect = new Rect(
 					this.transform.TransformPoint(cameraMoveBounds.position),
 					this.transform.TransformVector(cameraMoveBounds.size)
 				);
 
 				Rect cameraRect = new Rect(
-					this.gameCamera.transform.position - new Vector3(this.gameCamera.aspect, 1.0f) * this.gameCamera.orthographicSize,
+					Vector3.zero,
 					new Vector3(this.gameCamera.aspect, 1.0f) * this.gameCamera.orthographicSize * 2.0f
 				);
 
-				Vector2 cameraMovement = Vector2.zero;
+				Vector2 cameraMovement = this.cameraMoveAction.ReadValue<Vector2>() * cameraMoveSpeed;
 
-				if (cursorPos.x < this.cameraScrollBoundary) {
-					cameraMovement += Vector2.left * Mathf.Clamp(this.cameraScrollSpeed * Time.deltaTime, 0, cameraRect.xMin - worldSpaceRect.xMin);
-				}
-				if (cursorPos.x > Screen.width - this.cameraScrollBoundary) {
-					cameraMovement += Vector2.right * Mathf.Clamp(this.cameraScrollSpeed * Time.deltaTime, 0, worldSpaceRect.xMax - cameraRect.xMax);
-				}
-				if (cursorPos.y < this.cameraScrollBoundary) {
-					cameraMovement += Vector2.down * Mathf.Clamp(this.cameraScrollSpeed * Time.deltaTime, 0, cameraRect.yMin - worldSpaceRect.yMin);
-				}
-				if (cursorPos.y > Screen.height - this.cameraScrollBoundary) {
-					cameraMovement += Vector2.up * Mathf.Clamp(this.cameraScrollSpeed * Time.deltaTime, 0, worldSpaceRect.yMax - cameraRect.yMax);
-				}
+				Vector3 camPos = this.gameCamera.transform.position + (Vector3) cameraMovement;
 
-				this.gameCamera.transform.position += (Vector3) cameraMovement;
+				camPos.x = Mathf.Clamp(camPos.x, worldSpaceRect.min.x + cameraRect.width / 2, worldSpaceRect.max.x - cameraRect.width / 2);
+				camPos.y = Mathf.Clamp(camPos.y, worldSpaceRect.min.y + cameraRect.height / 2, worldSpaceRect.max.y - cameraRect.height / 2);
+
+				this.gameCamera.transform.position = camPos;
 			}
 		}
 
@@ -61,55 +45,10 @@ namespace FullMetalAcorn {
 				new Vector3(this.gameCamera.aspect, 1.0f) * this.gameCamera.orthographicSize * 2.0f
 			);
 
-			Gizmos.DrawWireCube(cameraRect.center, cameraRect.size);
-
 			Color prev = Gizmos.color;
-
 			Gizmos.color = Color.green;
 
-			float worldSpaceBoundaryX = (this.cameraScrollBoundary / Screen.width) * this.gameCamera.aspect * this.gameCamera.orthographicSize * 2.0f;
-			float worldSpaceBoundaryY = (this.cameraScrollBoundary / Screen.height) * this.gameCamera.orthographicSize * 2.0f;
-
-			Gizmos.DrawWireCube(
-				new Vector3(
-					cameraRect.xMin + worldSpaceBoundaryX / 2.0f,
-					cameraRect.center.y
-				),
-				new Vector3(
-					worldSpaceBoundaryX,
-					cameraRect.height
-				)
-			);
-			Gizmos.DrawWireCube(
-				new Vector3(
-					cameraRect.xMax - worldSpaceBoundaryX / 2.0f,
-					cameraRect.center.y
-				),
-				new Vector3(
-					worldSpaceBoundaryX,
-					cameraRect.height
-				)
-			);
-			Gizmos.DrawWireCube(
-				new Vector3(
-					cameraRect.center.x,
-					cameraRect.yMin + worldSpaceBoundaryY / 2.0f
-				),
-				new Vector3(
-					cameraRect.width,
-					worldSpaceBoundaryY
-				)
-			);
-			Gizmos.DrawWireCube(
-				new Vector3(
-					cameraRect.center.x,
-					cameraRect.yMax - worldSpaceBoundaryY / 2.0f
-				),
-				new Vector3(
-					cameraRect.width,
-					worldSpaceBoundaryY
-				)
-			);
+			Gizmos.DrawWireCube(cameraRect.center, cameraRect.size);
 
 			Gizmos.color = prev;
 

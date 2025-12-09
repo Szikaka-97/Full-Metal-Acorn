@@ -116,8 +116,8 @@ namespace FullMetalAcorn {
 
 			RegenerateTerrain();
 			
-			this.mousePosAction = InputSystem.actions.FindAction("Point");
-			this.mouseClickAction = InputSystem.actions.FindAction("Click");
+			this.mousePosAction = InputSystem.actions.FindAction("Mouse Point");
+			this.mouseClickAction = InputSystem.actions.FindAction("Mouse Click");
 		}
 
 		void Update() {
