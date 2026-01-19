@@ -12,48 +12,15 @@ namespace FullMetalAcorn
         public string next_scene;
         public Button next_scene_button;
 
-        //private static Actor current;
-
-        //public  AttackType selected_attack_type = AttackType.MELEE;
-        public ActiveAttackType actorAttackType;
-
-        private void Start()
-        {
-
-            actorAttackType = FindFirstObjectByType<ActiveAttackType>();
-
-            if (actorAttackType == null)
-                Debug.LogError("No ActiveAttackType found in scene!");
-        }
-
-        public void LoadNextScene()
-        {
-
+        public void LoadNextScene() {
             SceneManager.LoadScene(next_scene);
         }
 
-        public void activeMeleeAttack()
-        {
-            //selected_attack_type = AttackType.MELEE;
-            //Debug.Log("Melee attack selected");
-            if (actorAttackType != null)
-                actorAttackType.ActivateMeleeAttack();
-            else
-                Debug.Log("actorAttackType is null");
+        public void activeMeleeAttack() {
         }
-        public void activeRangedAttack()
-        {
-            //selected_attack_type = AttackType.RANGED;
-            //Debug.Log("Ranged attack selected");
-            if (actorAttackType != null)
-                actorAttackType.ActivateRangedAttack();
+        public void activeRangedAttack() {
         }
-        public void activeSpecialAttack()
-        {
-            //selected_attack_type = AttackType.SPECIAL;
-            //Debug.Log("Special attack selected");
-            if (actorAttackType != null)
-                actorAttackType.ActivateSpecialAttack();
+        public void activeSpecialAttack() {
         }
     }
 }

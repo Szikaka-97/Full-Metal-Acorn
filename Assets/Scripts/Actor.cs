@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FullMetalAcorn {
@@ -11,10 +12,14 @@ namespace FullMetalAcorn {
 		[SerializeField]
 		private OneShotAnimation m_deathEffect;
 
-        // private static MenuScript menuScript;
-        //	private AttackType selectedAttackType = menuScript.selected_attack_type; 
-        [SerializeField]
-        public ActiveAttackType m_selectedAttackType;
+		[SerializeField]
+		private Attack[] m_attacks;
+
+		public Attack[] Attacks {
+			get {
+				return new List<Attack>(m_attacks).ToArray();
+			}
+		}
 
         public int Health {
 			get => m_health;
