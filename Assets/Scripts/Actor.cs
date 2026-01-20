@@ -15,6 +15,8 @@ namespace FullMetalAcorn {
 		[SerializeField]
 		private Attack[] m_attacks;
 
+		[SerializeField] private int damage = 3;
+
 		public Attack[] Attacks {
 			get {
 				return new List<Attack>(m_attacks).ToArray();
@@ -33,6 +35,11 @@ namespace FullMetalAcorn {
 				}
 			}
 		}
+
+		//public void Hit()
+		//{
+		//	FindObjectOfType<PlayerHealth>.TakeDamage(damage);
+		//}
 
 		public bool IsPlayerTeam {
 			get => m_playerTeam;
