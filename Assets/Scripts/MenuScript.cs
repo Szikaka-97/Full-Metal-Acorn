@@ -39,15 +39,19 @@ namespace FullMetalAcorn
             PlayerHealth.OnPlayerTakeDamage -= UpdateHealthbar;
         }
 
-        public void LoadNextScene() {
+        public void LoadNextScene()
+        {
             SceneManager.LoadScene(next_scene);
         }
 
-        public void activeMeleeAttack() {
+        public void activeMeleeAttack()
+        {
         }
-        public void activeRangedAttack() {
+        public void activeRangedAttack()
+        {
         }
-        public void activeSpecialAttack() {
+        public void activeSpecialAttack()
+        {
         }
     }
 }

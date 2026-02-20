@@ -10,7 +10,6 @@ namespace FullMetalAcorn
         public int maxHealth { get; private set; }
 
         public static Action<int> OnPlayerTakeDamage;
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Awake()
         {
             currentHealth = health;
@@ -20,7 +19,7 @@ namespace FullMetalAcorn
 
         public void TakeDamage(int damageAmmount)
         {
-            currentHealth = -damageAmmount;
+            currentHealth -=damageAmmount;
             OnPlayerTakeDamage?.Invoke(currentHealth);
             if (currentHealth <= 0)
             {

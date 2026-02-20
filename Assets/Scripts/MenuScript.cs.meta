@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: 5a23c41feab0f504baedcea85adb858a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - healthbar: {fileID: 216859918570691340, guid: c4fdc5d5236ca99479430bc681920dc6, type: 3}
+  - next_scene_button: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
