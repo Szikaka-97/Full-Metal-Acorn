@@ -8,7 +8,7 @@ namespace FullMetalAcorn {
 		[SerializeField]
 		private Rect cameraMoveBounds = new Rect(-16, -9, 32, 18);
 		[SerializeField]
-		private float cameraMoveSpeed = 1;
+		private float cameraMoveSpeed = 2f;
 
 		private InputAction cameraMoveAction;
 
@@ -28,7 +28,7 @@ namespace FullMetalAcorn {
 					new Vector3(this.gameCamera.aspect, 1.0f) * this.gameCamera.orthographicSize * 2.0f
 				);
 
-				Vector2 cameraMovement = this.cameraMoveAction.ReadValue<Vector2>() * cameraMoveSpeed;
+				Vector2 cameraMovement = this.cameraMoveAction.ReadValue<Vector2>() * cameraMoveSpeed * Time.deltaTime;
 
 				Vector3 camPos = this.gameCamera.transform.position + (Vector3) cameraMovement;
 

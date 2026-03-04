@@ -1159,7 +1159,7 @@ MonoBehaviour:
     y: -4.5
     width: 16
     height: 9
-  cameraMoveSpeed: 0.4
+  cameraMoveSpeed: 2
 --- !u!114 &1137187452
 MonoBehaviour:
   m_ObjectHideFlags: 0
